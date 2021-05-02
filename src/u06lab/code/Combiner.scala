@@ -1,5 +1,7 @@
 package u06lab.code
 
+import scala.collection.immutable.{AbstractSeq, LinearSeq}
+
 /**
   * 1) Implement trait Functions with an object FunctionsImpl such that the code
   * in TryFunctions works correctly.
@@ -13,11 +15,22 @@ trait Functions {
 
 object FunctionsImpl extends Functions {
 
-  override def sum(a: List[Double]): Double = ???
+  override def sum(a: List[Double]): Double = a match {
+    case ::(head, next) => head + sum(next)
+    case Nil => 0.0
+  }
 
-  override def concat(a: Seq[String]): String = ???
+  override def concat(a: Seq[String]): String = {
+    var acc = ""
+    a.foreach(s => acc=acc+s)
+    acc
+  }
 
-  override def max(a: List[Int]): Int = ???
+  override def max(a: List[Int]): Int = {
+    var max = Integer.MIN_VALUE
+    a.foreach(el => max=if (el>max) el else max)
+    max
+  }
 }
 
 
