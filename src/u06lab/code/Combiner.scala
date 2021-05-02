@@ -15,14 +15,15 @@ trait Functions {
 
 object FunctionsImpl extends Functions {
 
-  override def sum(a: List[Double]): Double = a match {
-    case ::(head, next) => head + sum(next)
-    case Nil => 0.0
+  override def sum(a: List[Double]): Double = {
+    var acc = 0.0
+    a.foreach(el => acc = acc + el)
+    acc
   }
 
   override def concat(a: Seq[String]): String = {
     var acc = ""
-    a.foreach(s => acc=acc+s)
+    a.foreach(el => acc = acc + el)
     acc
   }
 
