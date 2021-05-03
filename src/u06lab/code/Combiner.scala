@@ -11,7 +11,7 @@ trait Functions {
   def sum(a: List[Double]): Double
   def concat(a: Seq[String]): String
   def max(a: List[Int]): Int // gives Int.MinValue if a is empty
-  def combine[A](a: Iterable[A])(combiner: Combiner[A]): A
+  def combine[A](a: Iterable[A])(implicit combiner: Combiner[A]): A
 }
 
 object FunctionsImpl extends Functions {
@@ -81,13 +81,14 @@ object TryFunctions extends App {
   println(f.combine(List(-10,3,-5,0))(maxCombiner))      // 3
   println(f.combine(List())(maxCombiner))                // -2147483648
 
-/*
-  println(f.combine(List(10.0,20.0,30.1))) // 60.1 <-ERRORE missing argument list (combiner: Combiner[A]) for method combine(Iterable[A])(Combiner[A])
-  println(f.combine(List()))       // 0.0
+
+  println(f.combine(List(10.0,20.0,30.1))) // 60.1
+  println(f.combine(List()[Double]))       // 0.0 <-Va specificato il tipo altrimenti non sa quale combiner prendere
+
   println(f.combine(Seq("a","b","c")))   // abc
-  println(f.combine(Seq()))              // ""
+  println(f.combine(Seq()[String]))      // "" <-Va specificato il tipo
+
   println(f.combine(List(-10,3,-5,0)))      // 3
-  println(f.combine(List()))                // -2147483648
-*/
+  println(f.combine(List()[Int]))           // -2147483648   <-Va specificato il tipo
 
 }
