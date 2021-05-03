@@ -32,6 +32,7 @@ object TicTacToe extends App{
   }
   */
 
+
   def computeAnyGame(player: Player, moves: Int): Stream[Game] = moves match {
   case 0 => Stream(List(Nil)) //1 game come lista di 0 board
   case _ => for {
@@ -41,8 +42,11 @@ object TicTacToe extends App{
     //tutte le board possibili con una mossa
     nextMove <- placeAnyMark(lastBoard, player) //acquista di volta in volta il valore di una mossa fattibile, una board valida
     } yield { //for ritorna una lista di game uno a uno e di prossime mosse una a una
-      //combinazione cartesiana di tutte le mosse e tutti i game
-      nextMove :: game
+
+      if( winning(game.head).isDefined ) //se il game è vincente lo ritorno così
+        game
+      else
+        nextMove :: game //combinazione cartesiana di tutte le mosse e tutti i game
     }
 
 }
@@ -61,6 +65,22 @@ object TicTacToe extends App{
     var placesAvailable :List[(Int, Int)] = List[(Int,Int)]()
     for (x<- 0 to 2;y<- 0 to 2) { if(isPlaceAvailable(board,x,y)) placesAvailable=placesAvailable.+:(x,y) }
     placesAvailable
+  }
+
+  def winning(board: Board): Option[Player] = {
+    for(x <- 0 to 2;
+        y <- 0 to 2;
+        player <- find(board,x,y) ) { //fornisce tutte le combinazioni una alla volta
+        //per ognuna
+        if ( find(board,x,y) == find(board,x+1.abs,y) && find(board,x,y) == find(board,x+2.abs,y) //player == stessa colonna   oppure
+        ||   find(board,x,y) == find(board,x,y+1.abs) && find(board,x,y) == find(board,x,y+2.abs) //player == stessa riga
+          ) {
+          return Some(player)
+        }
+    }
+    if (find(board,0,0) == find(board,1,1) && find(board,1,1) == find(board,2,3)) return find(board,1,1)  //diagonale |\|
+    if (find(board,2,0) == find(board,1,1) && find(board,1,1) == find(board,0,2)) return find(board,1,1)  //diagonale |/|
+    return None
   }
 
     // Exercise 1: implement find such that..
@@ -90,7 +110,7 @@ object TicTacToe extends App{
 
       // Exercise 3 (ADVANCED!): implement computeAnyGame such that..
       println("ES 3:")
-      computeAnyGame(O, 4) foreach {g => printBoards(g); println()}
+      computeAnyGame(O, 6) foreach {g => printBoards(g); println()}
       //... X.. X.. X.. XO.
       //... ... O.. O.. O..
       //... ... ... X.. X..
@@ -101,5 +121,14 @@ object TicTacToe extends App{
       //... .X. .X. .X. .X.
 
       // Exercise 4 (VERY ADVANCED!) -- modify the above one so as to stop each game when someone won!!
+      //test winning
+      println("Test WINNING")//None
+      println(winning(exampleBoard1))//None
+      val exampleBoard2:Board = List(Mark(0,0,X),Mark(0,1,X),Mark(0,2,X)) //X verticale
+      println(winning(exampleBoard2))//Some X
+      val exampleBoard3:Board = List(Mark(0,1,O),Mark(1,1,O),Mark(2,1,O)) //O orrizzontale
+      println(winning(exampleBoard3))//Some O
+      val exampleBoard4:Board = List(Mark(1,1,X),Mark(2,0,X),Mark(0,2,X)) //O diagonale /
+      println(winning(exampleBoard4))//Some X
 
-  }
+}

@@ -44,7 +44,7 @@ class NotTwoConsecutiveParser(chars: Set[Char]) extends BasicParser(chars) with 
 //implicit for class String
 object ImplicitConversions {
   implicit class MyRichString(base: String) {
-    def charParser(): Parser[Char] = new BasicParser (base.toSet)
+    def charParser(): Parser[Char] = new BasicParser(base.toSet)
   }
 }
 
