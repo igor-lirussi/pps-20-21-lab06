@@ -11,6 +11,7 @@ trait Functions {
   def sum(a: List[Double]): Double
   def concat(a: Seq[String]): String
   def max(a: List[Int]): Int // gives Int.MinValue if a is empty
+  def combine[A](a: Iterable[A])(combiner: Combiner[A]): A
 }
 
 object FunctionsImpl extends Functions {
@@ -32,21 +33,14 @@ object FunctionsImpl extends Functions {
     a.foreach(el => max=if (el>max) el else max)
     max
   }
+
+  //metodo combine riesce a fare quello che fanno i metodi sopra, passando un combiner
+  override def combine[A](a: Iterable[A])(combiner: Combiner[A]): A = {
+    var acc = combiner.unit
+    a.foreach(el => acc = combiner.combine(acc,el))
+    acc
+  }
 }
-
-
-/*
-  * 2) To apply DRY principle at the best,
-  * note the three methods in Functions do something similar.
-  * Use the following approach:
-  * - find three implementations of Combiner that tell (for sum,concat and max) how
-  *   to combine two elements, and what to return when the input list is empty
-  * - implement in FunctionsImpl a single method combiner that, other than
-  *   the collection of A, takes a Combiner as input
-  * - implement the three methods by simply calling combiner
-  *
-  * When all works, note we completely avoided duplications..
- */
 
 trait Combiner[A] {
   def unit: A
@@ -78,6 +72,14 @@ object TryFunctions extends App {
     override def combine(a: Int, b: Int): Int = if (a>b) a else b
     override def unit: Int = Integer.MIN_VALUE
   }
+
+
+  println(f.combine(List(10.0,20.0,30.1))(sumCombiner)) // 60.1
+  println(f.combine(List())(sumCombiner))                // 0.0
+  println(f.combine(Seq("a","b","c"))(concatCombiner))   // abc
+  println(f.combine(Seq())(concatCombiner))              // ""
+  println(f.combine(List(-10,3,-5,0))(maxCombiner))      // 3
+  println(f.combine(List())(maxCombiner))                // -2147483648
 
 
 }
