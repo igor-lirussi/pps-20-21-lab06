@@ -35,7 +35,7 @@ object FunctionsImpl extends Functions {
   }
 
   //metodo combine riesce a fare quello che fanno i metodi sopra, passando un combiner
-  override def combine[A](a: Iterable[A])(combiner: Combiner[A]): A = {
+  override def combine[A](a: Iterable[A])(implicit combiner: Combiner[A]): A = { //per rendere implicito il combiner
     var acc = combiner.unit
     a.foreach(el => acc = combiner.combine(acc,el))
     acc
@@ -58,17 +58,17 @@ object TryFunctions extends App {
   println(f.max(List(-10,3,-5,0)))      // 3
   println(f.max(List()))                // -2147483648
 
-  val sumCombiner = new Combiner[Double] {
+  implicit val sumCombiner = new Combiner[Double] {
     override def combine(a: Double, b: Double): Double = a+b
     override def unit: Double = 0.0
   }
 
-  val concatCombiner = new Combiner[String] {
+  implicit val concatCombiner = new Combiner[String] {
     override def combine(a: String, b: String): String = a+b
     override def unit: String = ""
   }
 
-  val maxCombiner = new Combiner[Int] {
+  implicit val maxCombiner = new Combiner[Int] {
     override def combine(a: Int, b: Int): Int = if (a>b) a else b
     override def unit: Int = Integer.MIN_VALUE
   }
@@ -81,5 +81,13 @@ object TryFunctions extends App {
   println(f.combine(List(-10,3,-5,0))(maxCombiner))      // 3
   println(f.combine(List())(maxCombiner))                // -2147483648
 
+/*
+  println(f.combine(List(10.0,20.0,30.1))) // 60.1 <-ERRORE missing argument list (combiner: Combiner[A]) for method combine(Iterable[A])(Combiner[A])
+  println(f.combine(List()))       // 0.0
+  println(f.combine(Seq("a","b","c")))   // abc
+  println(f.combine(Seq()))              // ""
+  println(f.combine(List(-10,3,-5,0)))      // 3
+  println(f.combine(List()))                // -2147483648
+*/
 
 }
