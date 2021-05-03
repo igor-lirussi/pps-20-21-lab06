@@ -83,12 +83,12 @@ object TryFunctions extends App {
 
 
   println(f.combine(List(10.0,20.0,30.1))) // 60.1
-  println(f.combine(List()[Double]))       // 0.0 <-Va specificato il tipo altrimenti non sa quale combiner prendere
+  println(f.combine(List[Double]()))       // 0.0 <-Va specificato il tipo altrimenti non sa quale combiner prendere
 
   println(f.combine(Seq("a","b","c")))   // abc
-  println(f.combine(Seq()[String]))      // "" <-Va specificato il tipo
+  println(f.combine(Seq[String]()))      // "" <-Va specificato il tipo
 
   println(f.combine(List(-10,3,-5,0)))      // 3
-  println(f.combine(List()[Int]))           // -2147483648   <-Va specificato il tipo
+  println(f.combine(List[Int]()))           // -2147483648   <-Va specificato il tipo
 
 }

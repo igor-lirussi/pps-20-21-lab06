@@ -46,10 +46,10 @@ class CombinerTests {
     //implicit combiner
     import ImplicitCombiners._
     assertEquals(60.1, f.combine(List(10.0,20.0,30.1))) // 60.1
-    assertEquals(0.0, f.combine(List()[Double]))                // 0.0
+    assertEquals(0.0, f.combine(List[Double]()))                // 0.0
     assertEquals("abc", f.combine(Seq("a","b","c")))   // abc
-    assertEquals("", f.combine(Seq()[String]))              // ""
+    assertEquals("", f.combine(Seq[String]()))              // ""
     assertEquals(3, f.combine(List(-10,3,-5,0)))      // 3
-    assertEquals( Integer.MIN_VALUE, f.combine(List()[Int]))                // -2147483648
+    assertEquals( Integer.MIN_VALUE, f.combine(List[Int]()))                // -2147483648
   }
 }
